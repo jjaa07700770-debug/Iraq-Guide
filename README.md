@@ -24,6 +24,19 @@ button{border:0;border-radius:10px;padding:14px 8px;color:white;background:#087f
 <body>
 <header>🇮🇶 دليل العراق</header>
 <div id="status">مرحباً بك في دليل العراق</div>
+
+<div id="searchBox">
+  <input
+    id="placeSearch"
+    type="search"
+    placeholder="🔎 ابحث عن مدينة أو شارع أو مكان..."
+  >
+  <button onclick="searchPlace()">بحث</button>
+</div>
+
+<div id="searchResults"></div>
+
+<div id="map"></div>
 <div id="map"></div>
 <div class="buttons">
 <button onclick="locate()">📍 موقعي الحالي</button>
