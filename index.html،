@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دليل العراق</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+body{margin:0;font-family:Arial;background:#f4f6f8}
+header{background:#087f5b;color:white;padding:16px;font-size:23px;font-weight:bold}
+#map{height:65vh;width:100%}
+.controls{padding:12px;display:grid;gap:10px}
+button{border:0;border-radius:10px;padding:14px;color:white;background:#087f5b;font-size:16px}
+.report{background:#c0392b}
+#status{padding:8px;font-size:14px}
+</style>
+</head>
+<body>
+<header>📍 دليل العراق</header>
+<div id="status">خريطة العراق — فعّل الموقع للسماح بتحديد مكانك</div>
+<div id="map"></div>
+<div class="controls">
+<button onclick="locate()">📍 تحديد موقعي</button>
+<button onclick="report()">🚧 بلّغ عن حادث أو حفرة</button>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map=L.map('map').setView([33.3,43.7],6);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+maxZoom:19,
+attribution:'© OpenStreetMap contributors'
+}).addTo(map);
+let reports=[];
+function locate(){
+if(!navigator.geolocation){
+statusText('المتصفح لا يدعم تحديد الموقع');
+return;
+}
+navigator.geolocation.getCurrentPosition(p=>{
+const lat=p.coords.latitude, lon=p.coords.longitude;
+map.setView([lat,lon],16);
+L.marker([lat,lon]).addTo(map).bindPopup('موقعك الحالي').openPopup();
+statusText('تم تحديد موقعك');
+},()=>statusText('تعذر تحديد الموقع. اسمح للموقع بالوصول إلى GPS.'),{enableHighAccuracy:true,timeout:15000});
+}
+function statusText(t){
+document.getElementById('status').textContent=t;
+}
+function report(){
+const types=['حادث','حفرة','طريق مغلق','زحام'];
+const choice=prompt('اكتب نوع البلاغ:\n1 حادث\n2 حفرة\n3 طريق مغلق\n4 زحام');
+const names={'1':'حادث','2':'حفرة','3':'طريق مغلق','4':'زحام'};
+if(!names[choice])return;
+const center=map.getCenter();
+L.marker(center).addTo(map).bindPopup('بلاغ: '+names[choice]).openPopup();
+reports.push({type:names[choice],lat:center.lat,lon:center.lng});
+statusText('أضيف البلاغ على الخريطة مؤقتاً');
+}
+</script>
+</body>
+</html>
